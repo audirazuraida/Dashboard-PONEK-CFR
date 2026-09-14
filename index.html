@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SATUSEHAT Data — Dashboard PONEK & CFR Direct Obstetric | Choropleth Indonesia</title>
+  <style>
+    :root {
+      --navy: #071329;
+      --navy2: #101a32;
+      --blue: #243b9b;
+      --blue2: #3153c9;
+      --green: #31b87a;
+      --green-soft: #e8f8f0;
+      --red: #df4261;
+      --red-soft: #fff0f3;
+      --pink: #f3bfd0;
+      --gray: #a7aeba;
+      --gray-soft: #eef1f5;
+      --bg: #f5f7fb;
+      --text: #172033;
+      --muted: #758096;
+      --border: #e3e8f1;
+      --white: #fff;
+      --shadow: 0 8px 28px rgba(15, 31, 67, .08);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text)
+    }
+
+    .app {
+      min-height: 100vh
+    }
+
+    .topbar {
+      height: 72px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      position: sticky;
+      top: 0;
+      z-index: 20
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #263a9a, #4969d8);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 17px
+    }
+
+    .brand b {
+      font-size: 15px;
+      display: block
+    }
+
+    .brand span {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #dfe7ff;
+      color: var(--blue);
+      display: grid;
+      place-items: center;
+      font-weight: 800
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 235px 1fr;
+      min-height: calc(100vh - 72px)
+    }
+
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 24px 14px
+    }
+
+    .menu-label {
+      font-size: 10px;
+      color: #9aa3b4;
+      font-weight: 800;
+      letter-spacing: .08em;
+      padding: 8px 12px
+    }
+
+    .nav {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      background: transparent;
+      border-radius: 10px;
+      color: #566177;
+      font-weight: 650;
+      text-align: left;
+      cursor: pointer;
+      margin: 3px 0
+    }
+
+    .nav:hover {
+      background: #f2f5ff;
+      color: var(--blue)
+    }
+
+    .nav.active {
+      background: #edf1ff;
+      color: var(--blue)
+    }
+
+    .icon {
+      width: 20px;
+      text-align: center
+    }
+
+    .content {
+      padding: 28px 32px 48px;
+      max-width: 1600px;
+      width: 100%;
+      margin: auto
+    }
+
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 20px
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px
+    }
+
+    h1 {
+      font-size: 25px;
+      margin: 0 0 5px;
+      letter-spacing: -.02em
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    select,
+    .btn {
+      height: 40px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 9px;
+      padding: 0 13px;
+      color: var(--text);
+      font-weight: 650;
+      cursor: pointer
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue)
+    }
+
+    .btn.ghost {
+      background: #fff
+    }
+
+    .toggle {
+      display: flex;
+      background: #eef1f6;
+      border-radius: 10px;
+      padding: 3px
+    }
+
+    .toggle button {
+      border: 0;
+      background: transparent;
+      padding: 9px 13px;
+      border-radius: 8px;
+      font-weight: 750;
+      color: #6e7788;
+      cursor: pointer
+    }
+
+    .toggle button.active {
+      background: #fff;
+      color: var(--blue);
+      box-shadow: 0 2px 7px rgba(0, 0, 0, .08)
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px
+    }
+
+    .kpis {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 18px
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: var(--shadow)
+    }
+
+    .kpi {
+      padding: 18px
+    }
+
+    .kpi .label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    .kpi .value {
+      font-size: 28px;
+      font-weight: 850;
+      margin: 7px 0
+    }
+
+    .kpi .foot {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .up {
+      color: var(--green);
+      font-weight: 800
+    }
+
+    .down {
+      color: var(--red);
+      font-weight: 800
+    }
+
+    .map-card {
+      padding: 18px
+    }
+
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px
+    }
+
+    .card-title h3 {
+      font-size: 14px;
+      margin: 0
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 10px;
+      color: #687286
+    }
+
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block
+    }
+
+    .map-wrap {
+      height: 520px;
+      background: linear-gradient(180deg, #f8fbff, #f1f5fa);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative
+    }
+
+    .map-svg {
+      width: 96%;
+      height: 92%;
+      object-fit: contain
+    }
+
+    .choropleth-map {
+      width: 100%;
+      height: 520px;
+      display: block;
+      background: #f4f7f9
+    }
+
+    .map-status {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 10px;
+      line-height: 1.6;
+      box-shadow: 0 4px 14px rgba(15, 31, 67, .06)
+    }
+
+    .map-status b {
+      font-size: 10px
+    }
+
+    .map-status span {
+      display: block
+    }
+
+    .map-status i {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      margin-right: 5px
+    }
+
+    .prov {
+      stroke: #fff;
+      stroke-width: 2;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .prov:hover {
+      filter: brightness(.92);
+      stroke: #1d2d72;
+      stroke-width: 3
+    }
+
+    .leaflet-map-host {
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      border-radius: 13px;
+      overflow: hidden;
+      position: relative
+    }
+
+    .leaflet-container {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+    }
+
+    .leaflet-control-attribution {
+      font-size: 9px
+    }
+
+    .map-info-control {
+      padding: 10px 15px;
+      font-size: 12px;
+      line-height: 17px;
+      background: rgba(255, 255, 255, .93);
+      box-shadow: 0 0 15px rgba(0, 0, 0, .16);
+      border-radius: 8px;
+      color: #333;
+      min-width: 180px
+    }
+
+    .map-info-control h4 {
+      margin: 0 0 5px;
+      color: #17633f;
+      font-size: 12px
+    }
+
+    .map-legend-control {
+      line-height: 18px;
+      color: #555;
+      background: rgba(255, 255, 255, .95);
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, .16);
+      font-size: 10px
+    }
+
+    .map-legend-control i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: .8;
+      border-radius: 2px
+    }
+
+    .map-note {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 10px;
+      color: var(--muted)
+    }
+
+    .table-card {
+      padding: 0;
+      overflow: hidden
+    }
+
+    .table-head {
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .table-head h3 {
+      margin: 0;
+      font-size: 14px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    th {
+      background: var(--navy);
+      color: #fff;
+      text-align: left;
+      padding: 13px 14px;
+      font-size: 10px;
+      letter-spacing: .04em
+    }
+
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #edf0f5
+    }
+
+    tr:hover td {
+      background: #fafbfe
+    }
+
+    .link {
+      color: var(--blue);
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .status {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .03em
+    }
+
+    .status.green {
+      background: var(--green-soft);
+      color: #168458
+    }
+
+    .status.red {
+      background: var(--red-soft);
+      color: #c12e4e
+    }
+
+    .status.gray {
+      background: var(--gray-soft);
+      color: #6e7685
+    }
+
+    .status.pink {
+      background: #fff0f6;
+      color: #a6496a
+    }
+
+    .two {
+      grid-template-columns: 1.2fr .8fr
+    }
+
+    .progress {
+      padding: 20px
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 17px 0
+    }
+
+    .progress-label {
+      width: 100px;
+      font-size: 11px;
+      font-weight: 750
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 8px;
+      background: #edf0f5;
+      flex: 1;
+      overflow: hidden
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      background: var(--green);
+      border-radius: 8px
+    }
+
+    .pct {
+      width: 42px;
+      text-align: right;
+      font-size: 11px;
+      font-weight: 800
+    }
+
+    .heat-table td {
+      text-align: center
+    }
+
+    .heat-table th {
+      text-align: center
+    }
+
+    .heat-green {
+      background: #63c9a0 !important
+    }
+
+    .heat-red {
+      background: #e14c58 !important;
+      color: #fff
+    }
+
+    .heat-gray {
+      background: #d9dde4 !important;
+      color: #667080
+    }
+
+    .heat-label {
+      text-align: left !important;
+      font-weight: 750;
+      background: #fff !important;
+      color: var(--text) !important
+    }
+
+    .info {
+      padding: 18px
+    }
+
+    .info h3 {
+      margin: 0 0 13px;
+      font-size: 14px
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 12px
+    }
+
+    .info-item span {
+      color: var(--muted)
+    }
+
+    .info-item b {
+      font-weight: 800
+    }
+
+    .cfr-detail-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px
+    }
+
+    .cfr-province-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px
+    }
+
+    .cfr-province-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: #dff5e9;
+      color: #168458;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 850
+    }
+
+    .cfr-detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #687286;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 12px
+    }
+
+    .cfr-detail-back:hover {
+      color: #168458
+    }
+
+    .cfr-detail-title h1 {
+      font-size: 28px;
+      margin: 0 0 4px
+    }
+
+    .cfr-detail-title p {
+      margin: 0;
+      color: #758096;
+      font-size: 15px
+    }
+
+    .cfr-download {
+      height: 40px;
+      border: 1.5px solid #168458;
+      background: #fff;
+      color: #168458;
+      border-radius: 9px;
+      padding: 0 18px;
+      font-weight: 750;
+      cursor: pointer
+    }
+
+    .cfr-download:hover {
+      background: #f1fbf5
+    }
+
+    .cfr-detail-table {
+      border: 1px solid var(--border);
+      border-radius: 0;
+      box-shadow: none
+    }
+
+    .cfr-detail-table table {
+      font-size: 15px
+    }
+
+    .cfr-detail-table th {
+      font-size: 13px;
+      padding: 14px 15px
+    }
+
+    .cfr-detail-table td {
+      padding: 13px 15px
+    }
+
+    .cfr-detail-table th:not(:nth-child(2)),
+    .cfr-detail-table td:not(:nth-child(2)) {
+      text-align: center
+    }
+
+    .cfr-detail-table td:nth-child(2) {
+      font-weight: 750
+    }
+
+    .cfr-detail-table .province-link {
+      color: #1f5ed8
+    }
+
+    .cfr-detail-table .num {
+      font-variant-numeric: tabular-nums
+    }
+
+    .cfr-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 4px;
+      color: #758096;
+      font-size: 13px
+    }
+
+    .cfr-pages {
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .cfr-pages button {
+      min-width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px
+    }
+
+    .cfr-pages button.active {
+      background: #168458;
+      color: #fff;
+      border-color: #168458
+    }
+
+    .cfr-page-size {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 7px;
+      padding: 7px 11px;
+      color: #333
+    }
+
+    .cfr-detail-legend {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      border-top: 1px solid var(--border);
+      padding: 18px 0 0;
+      margin-top: 4px
+    }
+
+    .cfr-legend-item {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start
+    }
+
+    .cfr-legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex: 0 0 auto
+    }
+
+    .cfr-legend-item strong {
+      display: block;
+      font-size: 13px
+    }
+
+    .cfr-legend-item span {
+      display: block;
+      color: #758096;
+      font-size: 12px;
+      margin-top: 3px
+    }
+
+    @media(max-width:900px) {
+      .cfr-detail-head {
+        align-items: flex-start;
+        flex-direction: column
+      }
+
+      .cfr-detail-table {
+        overflow: auto
+      }
+
+      .cfr-detail-table table {
+        min-width: 1200px
+      }
+
+      .cfr-detail-legend {
+        grid-template-columns: 1fr
+      }
+
+      .cfr-pagination {
+        gap: 15px;
+        flex-wrap: wrap
+      }
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 12px
+    }
+
+    .breadcrumb b {
+      color: var(--blue);
+      cursor: pointer
+    }
+
+    .empty {
+      padding: 55px;
+      text-align: center;
+      color: var(--muted)
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 12, 28, .58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 25px
+    }
+
+    .overlay.show {
+      display: flex
+    }
+
+    .modal {
+      width: min(920px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, .25)
+    }
+
+    .modal-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px
+    }
+
+    .modal-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px
+    }
+
+    .close {
+      border: 0;
+      background: #f1f3f7;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px
+    }
+
+    .modal-body {
+      padding: 18px
+    }
+
+    .modal-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 10px;
+      color: var(--muted)
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      display: none;
+      z-index: 70;
+      box-shadow: var(--shadow)
+    }
+
+    .toast.show {
+      display: block
+    }
+
+    @media(max-width:1050px) {
+      .layout {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .two {
+        grid-template-columns: 1fr
+      }
+
+      .content {
+        padding: 20px
+      }
+
+      .page-head {
+        align-items: flex-start;
+        flex-direction: column
+      }
+    }
+
+    @media(max-width:650px) {
+      .topbar {
+        padding: 0 14px
+      }
+
+      .content {
+        padding: 15px
+      }
+
+      .kpis {
+        grid-template-columns: 1fr
+      }
+
+      table {
+        min-width: 760px
+      }
+
+      .table-card {
+        overflow: auto
+      }
+
+      .map-wrap {
+        height: 300px
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">SD</div>
+        <div><b>SATUSEHAT DATA</b><span>Monitoring Pelayanan Kesehatan</span></div>
+      </div>
+      <div class="user"><span>Dinas Kesehatan</span>
+        <div class="avatar">AK</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="menu-label">DASHBOARD</div>
+        <button class="nav active" id="navPonek" onclick="showPage('ponek')"><span class="icon">▦</span> Ketersediaan RS
+          PONEK</button>
+        <button class="nav" id="navCfr" onclick="showPage('cfr')"><span class="icon">◉</span> CFR Direct
+          Obstetric</button>
+        <div class="menu-label" style="margin-top:20px">LAINNYA</div>
+        <button class="nav" onclick="toast('Data tersinkronisasi dari SATUSEHAT DWH / RS Online')"><span
+            class="icon">↻</span> Status Integrasi</button>
+      </aside>
+
+      <main class="content">
+        <section id="ponekPage">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">GATEWAY UTAMA</div>
+              <h1 id="ponekTitle">Dashboard Ketersediaan RS PONEK</h1>
+              <div class="subtitle">Pemenuhan minimal 1 RS PONEK per 500.000 penduduk</div>
+            </div>
+            <div class="controls">
+              <div class="toggle"><button class="active" onclick="showPage('ponek')">PONEK</button><button
+                  onclick="showPage('cfr')">CFR DO</button></div>
+              <select id="ponekYear" onchange="toast('Periode PONEK diubah ke '+this.value)">
+                <option>2026</option>
+                <option>2025</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid kpis">
+            <div class="card kpi">
+              <div class="label">PROVINSI TERPANTAU</div>
+              <div class="value">38</div>
+              <div class="foot"><span class="up">100%</span> data regional</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KAB/KOTA MEMENUHI</div>
+              <div class="value">312</div>
+              <div class="foot">dari 514 kabupaten/kota</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KAB/KOTA BELUM MEMENUHI</div>
+              <div class="value">202</div>
+              <div class="foot"><span class="down">39,3%</span> dari total</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">RASIO TARGET</div>
+              <div class="value">1 : 500.000</div>
+              <div class="foot">penduduk per RS PONEK</div>
+            </div>
+          </div>
+
+          <div class="card map-card">
+            <div class="card-title">
+              <h3>Heatmap Ketersediaan RS PONEK per 500.000 Penduduk</h3>
+              <div class="legend">
+                <span><i class="dot" style="background:#45b989"></i>Hijau · 100% terpenuhi</span>
+                <span><i class="dot" style="background:#f1b5c9"></i>Merah muda · ≤50% belum terpenuhi</span>
+                <span><i class="dot" style="background:#dd4454"></i>Merah terang · &gt;50% belum terpenuhi</span>
+              </div>
+            </div>
+            <div class="map-wrap">
+              <div id="mapPonek" class="choropleth-map leaflet-map-host"
+                aria-label="Choropleth ketersediaan RS PONEK per provinsi"></div>
+              <div class="map-status" style="display:none">
+                <b>Choropleth PONEK</b>
+                <span><i style="background:#238b45"></i>≥100% target</span>
+                <span><i style="background:#8fca9f"></i>75–99%</span>
+                <span><i style="background:#f1b5c9"></i>50–74%</span>
+                <span><i style="background:#dd4454"></i>&lt;50%</span>
+              </div>
+              <div class="map-note">Klik provinsi untuk drill-down. Warna menunjukkan persentase pemenuhan target RS
+                PONEK.</div>
+            </div>
+          </div>
+
+          <div class="card table-card" style="margin-top:18px">
+            <div class="table-head">
+              <h3>Rekapitulasi Ketersediaan RS PONEK Nasional</h3><button class="btn ghost"
+                onclick="toast('Data rekap siap untuk diekspor')">Export .XLSX</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>PROVINSI</th>
+                  <th>JUMLAH KAB/KOTA</th>
+                  <th>KAB/KOTA MEMENUHI</th>
+                  <th>KAB/KOTA BELUM MEMENUHI</th>
+                  <th>STATUS PEMENUHAN PETA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="link" onclick="openProvince('DKI Jakarta')">DKI Jakarta ›</span></td>
+                  <td>6</td>
+                  <td>6</td>
+                  <td>0</td>
+                  <td><span class="status green">HIJAU</span></td>
+                </tr>
+                <tr>
+                  <td><span class="link" onclick="openProvince('Jawa Tengah')">Jawa Tengah ›</span></td>
+                  <td>35</td>
+                  <td>25</td>
+                  <td>10</td>
+                  <td><span class="status pink">MERAH MUDA</span></td>
+                </tr>
+                <tr>
+                  <td><span class="link" onclick="openProvince('Jawa Barat')">Jawa Barat ›</span></td>
+                  <td>27</td>
+                  <td>10</td>
+                  <td>17</td>
+                  <td><span class="status red">MERAH TERANG</span></td>
+                </tr>
+                <tr>
+                  <td><span class="link" onclick="openProvince('Jawa Timur')">Jawa Timur ›</span></td>
+                  <td>38</td>
+                  <td>30</td>
+                  <td>8</td>
+                  <td><span class="status pink">MERAH MUDA</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="provincePage" style="display:none">
+          <div class="breadcrumb"><b onclick="backNational()">← Kembali ke Nasional</b><span>/</span><span
+              id="provinceCrumb">Jawa Tengah</span></div>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">DETAIL PROVINSI</div>
+              <h1 id="provinceTitle">Dashboard Ketersediaan RS PONEK / Jawa Tengah</h1>
+              <div class="subtitle">Drill-down Kabupaten/Kota dan fasilitas PONEK</div>
+            </div>
+            <div class="controls">
+              <div class="toggle"><button class="active">PONEK</button><button onclick="showPage('cfr')">CFR DO</button>
+              </div><select>
+                <option>2026</option>
+                <option>2025</option>
+              </select>
+            </div>
+          </div>
+          <div class="card table-card">
+            <div class="table-head">
+              <h3>Pemenuhan RS PONEK per Kabupaten/Kota</h3><button class="btn primary"
+                onclick="toast('Laporan provinsi berhasil dibuat')">Export Data</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>NAMA KABUPATEN/KOTA</th>
+                  <th>JUMLAH RS DENGAN PELAYANAN KIA</th>
+                  <th>TARGET KEBUTUHAN RS PONEK</th>
+                  <th>JUMLAH RS PONEK YANG TERSEDIA</th>
+                  <th>STATUS PEMENUHAN INDIKATOR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Kab. Kendal</td>
+                  <td>8</td>
+                  <td>2</td>
+                  <td><span class="link" onclick="openHospitals('Kab. Kendal')">2 RS Terstandar →</span></td>
+                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
+                </tr>
+                <tr>
+                  <td>Kota Semarang</td>
+                  <td>15</td>
+                  <td>3</td>
+                  <td><span class="link" onclick="openHospitals('Kota Semarang')">3 RS Terstandar →</span></td>
+                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
+                </tr>
+                <tr>
+                  <td>Kab. Batang</td>
+                  <td>4</td>
+                  <td>2</td>
+                  <td><span class="link" onclick="openHospitals('Kab. Batang')">1 RS Terstandar →</span></td>
+                  <td><span class="status red">MERAH · BELUM TERPENUHI</span></td>
+                </tr>
+                <tr>
+                  <td>Kab. Demak</td>
+                  <td>6</td>
+                  <td>2</td>
+                  <td><span class="link" onclick="openHospitals('Kab. Demak')">2 RS Terstandar →</span></td>
+                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
+                </tr>
+                <tr>
+                  <td>Kab. Grobogan</td>
+                  <td>7</td>
+                  <td>2</td>
+                  <td><span class="link" onclick="openHospitals('Kab. Grobogan')">1 RS Terstandar →</span></td>
+                  <td><span class="status red">MERAH · BELUM TERPENUHI</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid two" style="margin-top:18px">
+            <div class="card info">
+              <h3>Logika indikator</h3>
+              <div class="info-list">
+                <div class="info-item"><span>Target kebutuhan</span><b>Ceiling (Populasi / 500.000)</b></div>
+                <div class="info-item"><span>Terpenuhi</span><b style="color:var(--green)">Actual PONEK ≥ Target</b>
+                </div>
+                <div class="info-item"><span>Belum terpenuhi</span><b style="color:var(--red)">Actual PONEK &lt;
+                    Target</b></div>
+              </div>
+            </div>
+            <div class="card progress">
+              <h3 style="font-size:14px;margin:0">Capaian provinsi</h3>
+              <div class="progress-row">
+                <div class="progress-label">Memenuhi</div>
+                <div class="bar"><i style="width:71%"></i></div>
+                <div class="pct">25/35</div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label">Belum</div>
+                <div class="bar"><i style="width:29%;background:var(--red)"></i></div>
+                <div class="pct">10/35</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="cfrPage" style="display:none">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">GATEWAY UTAMA</div>
+              <h1>Dashboard Analisis CFR Direct Obstetric</h1>
+              <div class="subtitle">Monitoring Case Fatality Rate berdasarkan wilayah dan tahun</div>
+            </div>
+            <div class="controls">
+              <div class="toggle"><button onclick="showPage('ponek')">PONEK</button><button class="active">CFR
+                  DO</button></div><select id="cfrYear" onchange="toast('Periode CFR diubah ke '+this.value)">
+                <option>2026</option>
+                <option>2025</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid kpis">
+            <div class="card kpi">
+              <div class="label">PROVINSI TARGET MET</div>
+              <div class="value">21</div>
+              <div class="foot">CFR &lt; 1%</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">PROVINSI TARGET NOT MET</div>
+              <div class="value">12</div>
+              <div class="foot">CFR ≥ 1%</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KAB/KOTA INELIGIBLE</div>
+              <div class="value">86</div>
+              <div class="foot">kasus &lt; 100 atau met need tidak terpenuhi</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">TARGET CFR</div>
+              <div class="value">&lt; 1%</div>
+              <div class="foot">Direct Obstetric CFR</div>
+            </div>
+          </div>
+
+          <div class="card map-card">
+            <div class="card-title">
+              <h3>Heatmap Capaian Angka Fatalitas CFR DO Nasional</h3>
+              <div class="legend"><span><i class="dot" style="background:#45b989"></i>Hijau · CFR &lt;1%</span><span><i
+                    class="dot" style="background:#dd4454"></i>Merah · CFR ≥1%</span><span><i class="dot"
+                    style="background:#a7aeba"></i>Abu-abu · tidak eligible</span></div>
+            </div>
+            <div class="map-wrap">
+              <div id="mapCfr" class="choropleth-map leaflet-map-host"
+                aria-label="Choropleth Heatmap Capaian Angka Fatalitas CFR DO Nasional"></div>
+              <div class="map-status" style="display:none">
+                <b>Choropleth CFR DO</b>
+                <span><i style="background:#238b45"></i>&lt;0,5%</span>
+                <span><i style="background:#7fc99a"></i>0,5–0,99%</span>
+                <span><i style="background:#f1b5c9"></i>1–1,49%</span>
+                <span><i style="background:#c93648"></i>≥1,5%</span>
+                <span><i style="background:#a7aeba"></i>Ineligible</span>
+              </div>
+              <div class="map-note">Klik provinsi untuk melihat ringkasan CFR. Abu-abu = tidak eligible sesuai kriteria
+                PRD.</div>
+            </div>
+          </div>
+
+          <div class="card table-card" style="margin-top:18px">
+            <div class="table-head">
+              <h3>Tabel Indikator Klinis CFR DO Tingkat Provinsi</h3><button class="btn ghost"
+                onclick="toast('Tabel CFR diekspor')">Export Data</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>PROVINSI</th>
+                  <th>HASIL CFR</th>
+                  <th>INTERPRETASI</th>
+                  <th>TOTAL KAB/KOTA</th>
+                  <th>KAB/KOTA MEMENUHI INDIKATOR</th>
+                  <th>KAB/KOTA BELUM MEMENUHI INDIKATOR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><span class="link" onclick="openCfr('DKI Jakarta')">DKI Jakarta ›</span></td>
+                  <td><b>0,42%</b></td>
+                  <td><span class="status green">CFR &lt; 1%</span></td>
+                  <td>6</td>
+                  <td>6</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><span class="link" onclick="openCfr('Jawa Tengah')">Jawa Tengah ›</span></td>
+                  <td><b>1,15%</b></td>
+                  <td><span class="status red">CFR ≥ 1%</span></td>
+                  <td>35</td>
+                  <td>25</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><span class="link" onclick="openCfr('Jawa Barat')">Jawa Barat ›</span></td>
+                  <td><b>1,22%</b></td>
+                  <td><span class="status red">CFR ≥ 1%</span></td>
+                  <td>27</td>
+                  <td>14</td>
+                  <td>13</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td><span class="link" onclick="openCfr('Jawa Timur')">Jawa Timur ›</span></td>
+                  <td><b>0,85%</b></td>
+                  <td><span class="status green">CFR &lt; 1%</span></td>
+                  <td>38</td>
+                  <td>32</td>
+                  <td>6</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two" style="margin-top:18px">
+            <div class="card info">
+              <h3>Komponen perhitungan CFR</h3>
+              <div class="info-list">
+                <div class="info-item"><span>Kasus HDK / PIH</span><b>O11–O16</b></div>
+                <div class="info-item"><span>Mati HDK</span><b>Deceased</b></div>
+                <div class="info-item"><span>Kasus HPP / PPH</span><b>O20, O43–O46, O67, O71–O72</b></div>
+                <div class="info-item"><span>Mati HPP</span><b>Deceased</b></div>
+              </div>
+            </div>
+            <div class="card info">
+              <h3>Kriteria eligibility Kab/Kota</h3>
+              <div class="info-list">
+                <div class="info-item"><span>Minimum case volume</span><b>&gt; 100 kasus</b></div>
+                <div class="info-item"><span>Met Need</span><b>≥ 80%</b></div>
+                <div class="info-item"><span>Jika tidak lolos</span><b style="color:#687286">Gray / Ineligible</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card table-card" style="margin-top:18px">
+            <div class="table-head">
+              <h3>Progress Capaian CFR per Kab/Kota per Tahun</h3><span style="font-size:11px;color:var(--muted)">Contoh
+                tampilan heatmap 2025–2027</span>
+            </div>
+            <table class="heat-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left">KAB/KOTA</th>
+                  <th>2025</th>
+                  <th>2026</th>
+                  <th>2027</th>
+                  <th>INTERPRETASI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="heat-label">Bogor</td>
+                  <td class="heat-green">0,43%</td>
+                  <td class="heat-green">0,56%</td>
+                  <td class="heat-green">0,78%</td>
+                  <td><span class="status green">TARGET MET</span></td>
+                </tr>
+                <tr>
+                  <td class="heat-label">Bekasi</td>
+                  <td class="heat-gray">N/A</td>
+                  <td class="heat-red">1,5%</td>
+                  <td class="heat-green">0,51%</td>
+                  <td><span class="status green">TARGET MET</span></td>
+                </tr>
+                <tr>
+                  <td class="heat-label">Depok</td>
+                  <td class="heat-red">2,3%</td>
+                  <td class="heat-green">0,68%</td>
+                  <td class="heat-green">0,51%</td>
+                  <td><span class="status green">TARGET MET</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <section id="cfrProvincePage" style="display:none">
+          <div class="cfr-detail-back" onclick="backCfrProvince()">←&nbsp; Kembali ke Provinsi</div>
+
+          <div class="cfr-detail-head">
+            <div class="cfr-province-brand">
+              <div class="cfr-province-badge" id="cfrProvinceBadge">JT</div>
+              <div class="cfr-detail-title">
+                <h1 id="cfrProvinceTitle">Provinsi Jawa Tengah</h1>
+                <p>Data indikator klinis CFR DO per Kabupaten/Kota</p>
+              </div>
+            </div>
+            <button class="cfr-download" onclick="toast('Data CFR provinsi siap diunduh')">↓ &nbsp;Download
+              Data</button>
+          </div>
+
+          <div class="card table-card cfr-detail-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Kabupaten/Kota</th>
+                  <th>Jml Kasus HDK</th>
+                  <th>Kematian HDK</th>
+                  <th>Jml Kasus HPP</th>
+                  <th>Kematian HPP</th>
+                  <th>Total Kasus DO</th>
+                  <th>Hasil Met Need</th>
+                  <th>Eligibilitas</th>
+                  <th>Hasil CFR</th>
+                  <th>Interpretasi</th>
+                </tr>
+              </thead>
+              <tbody id="cfrProvinceRows"></tbody>
+            </table>
+          </div>
+
+          <div class="cfr-pagination">
+            <span id="cfrProvinceCount">Menampilkan 1 - 10 dari 35 Kab/Kota</span>
+            <div class="cfr-pages">
+              <button onclick="toast('Halaman sebelumnya')">‹</button>
+              <button class="active">1</button>
+              <button onclick="toast('Halaman 2')">2</button>
+              <button onclick="toast('Halaman 3')">3</button>
+              <button onclick="toast('Halaman 4')">4</button>
+              <button onclick="toast('Halaman berikutnya')">›</button>
+            </div>
+            <span class="cfr-page-size">10 / halaman ▾</span>
+          </div>
+
+          <div class="cfr-detail-legend">
+            <div class="cfr-legend-item">
+              <i class="cfr-legend-dot" style="background:#a7aeba"></i>
+              <div><strong>Tidak Eligible</strong><span>Met Need &lt; 80% / data tidak lengkap</span></div>
+            </div>
+            <div class="cfr-legend-item">
+              <i class="cfr-legend-dot" style="background:#168458"></i>
+              <div><strong>Memenuhi Target</strong><span>CFR &lt; 1%</span></div>
+            </div>
+            <div class="cfr-legend-item">
+              <i class="cfr-legend-dot" style="background:#c9282d"></i>
+              <div><strong>Tidak Memenuhi Target</strong><span>CFR ≥ 1%</span></div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <div class="overlay" id="hospitalModal" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2>Tampilan Detail Fasyankes PONEK</h2>
+            <p id="modalRegion">Kab. Batang</p>
+          </div><button class="close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <table>
+            <thead>
+              <tr>
+                <th>NAMA RUMAH SAKIT</th>
+                <th>JENIS RUMAH SAKIT</th>
+                <th>KEPEMILIKAN</th>
+                <th>LEVEL RS PONEK</th>
+              </tr>
+            </thead>
+            <tbody id="hospitalRows"></tbody>
+          </table>
+        </div>
+        <div class="modal-foot"><span>Data sumber: RS Online · Level: Spesialistik, Subspesialistik,
+            Multisubspesialistik</span><button class="btn primary" onclick="toast('File .XLSX berhasil disiapkan')">⇩
+            Download (.XLSX)</button></div>
+      </div>
+    </div>
+
+    <div class="overlay" id="cfrModal" onclick="if(event.target===this)closeCfrModal()">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="cfrModalTitle">Ringkasan CFR</h2>
+            <p>Detail indikator wilayah terpilih</p>
+          </div><button class="close" onclick="closeCfrModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+            <div class="card kpi">
+              <div class="label">KASUS HDK / PIH</div>
+              <div class="value">1.240</div>
+              <div class="foot">unique patient</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KASUS HPP / PPH</div>
+              <div class="value">860</div>
+              <div class="foot">unique patient</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">HASIL CFR</div>
+              <div class="value" id="cfrValue">0,85%</div>
+              <div class="foot"><span class="up">Target met</span></div>
+            </div>
+          </div>
+          <div class="card info">
+            <h3>Eligibility</h3>
+            <div class="info-list">
+              <div class="info-item"><span>Minimum case volume</span><b>&gt;100 ✓</b></div>
+              <div class="info-item"><span>Met Need</span><b>86% ✓</b></div>
+              <div class="info-item"><span>Status</span><b style="color:var(--green)">Eligible</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const GEOJSON_URL = 'https://raw.githubusercontent.com/ans-4175/peta-indonesia-geojson/master/indonesia-prov.geojson';
+
+      const ponekData = {
+        'Aceh': 92, 'Sumatera Utara': 81, 'Sumatera Barat': 74, 'Riau': 103, 'Jambi': 68, 'Sumatera Selatan': 88, 'Bengkulu': 59, 'Lampung': 71, 'Kepulauan Bangka Belitung': 96, 'Kepulauan Riau': 84,
+        'DKI Jakarta': 118, 'Jawa Barat': 79, 'Jawa Tengah': 104, 'DI Yogyakarta': 112, 'Jawa Timur': 91, 'Banten': 73, 'Bali': 108, 'Nusa Tenggara Barat': 66, 'Nusa Tenggara Timur': 52, 'Kalimantan Barat': 61,
+        'Kalimantan Tengah': 83, 'Kalimantan Selatan': 97, 'Kalimantan Timur': 115, 'Kalimantan Utara': 78, 'Sulawesi Utara': 102, 'Sulawesi Tengah': 76, 'Sulawesi Selatan': 94, 'Sulawesi Tenggara': 69,
+        'Gorontalo': 57, 'Sulawesi Barat': 49, 'Maluku': 63, 'Maluku Utara': 72, 'Papua Barat': 55, 'Papua Barat Daya': 47, 'Papua': 58, 'Papua Selatan': 43, 'Papua Tengah': 39, 'Papua Pegunungan': 31
+      };
+
+      const cfrData = {
+        'Aceh': 0.82, 'Sumatera Utara': 1.14, 'Sumatera Barat': 0.71, 'Riau': 0.64, 'Jambi': 1.31, 'Sumatera Selatan': 1.02, 'Bengkulu': 0.58, 'Lampung': 1.26, 'Kepulauan Bangka Belitung': 0.46, 'Kepulauan Riau': 0.77,
+        'DKI Jakarta': 0.42, 'Jawa Barat': 1.22, 'Jawa Tengah': 1.15, 'DI Yogyakarta': 0.63, 'Jawa Timur': 0.91, 'Banten': 1.08, 'Bali': 0.55, 'Nusa Tenggara Barat': 1.37, 'Nusa Tenggara Timur': 1.61, 'Kalimantan Barat': 1.18,
+        'Kalimantan Tengah': 0.89, 'Kalimantan Selatan': 0.74, 'Kalimantan Timur': 0.69, 'Kalimantan Utara': 1.28, 'Sulawesi Utara': 0.62, 'Sulawesi Tengah': 1.06, 'Sulawesi Selatan': 0.97, 'Sulawesi Tenggara': 1.43,
+        'Gorontalo': 1.21, 'Sulawesi Barat': 0.81, 'Maluku': 1.54, 'Maluku Utara': 0.88, 'Papua Barat': null, 'Papua Barat Daya': 1.48, 'Papua': null, 'Papua Selatan': 1.76, 'Papua Tengah': null, 'Papua Pegunungan': null
+      };
+
+      let geojsonData = null;
+      let ponekMap = null, ponekLayer = null;
+      let cfrMap = null, cfrLayer = null;
+      let geojsonPromise = null;
+
+      function ponekColor(d) {
+        return d > 100 ? '#238b45' :
+          d > 80 ? '#4fae73' :
+            d > 60 ? '#8fca9f' :
+              d > 40 ? '#f1b5c9' :
+                '#dd4454';
+      }
+
+      function cfrColor(d) {
+        if (d === null || d === undefined) return '#A7AEB8';
+        return d >= 1.50 ? '#800026' :
+          d >= 1.00 ? '#BD0026' :
+            d >= 0.75 ? '#E57373' :
+              d >= 0.50 ? '#7FC99A' :
+                '#238B45';
+      }
+
+      function provinceName(feature) {
+        const p = feature.properties || {};
+        return p.Propinsi || p.propinsi || p.PROVINSI || p.province || p.name || 'Provinsi';
+      }
+
+      function normalizeProvinceName(name) {
+        const aliases = {
+          'NUSA TENGGARA BARAT': 'Nusa Tenggara Barat',
+          'NUSA TENGGARA TIMUR': 'Nusa Tenggara Timur',
+          'KEP. BANGKA BELITUNG': 'Kepulauan Bangka Belitung',
+          'KEPULAUAN BANGKA BELITUNG': 'Kepulauan Bangka Belitung',
+          'KEP. RIAU': 'Kepulauan Riau',
+          'KEPULAUAN RIAU': 'Kepulauan Riau',
+          'DKI JAKARTA': 'DKI Jakarta',
+          'DAERAH KHUSUS IBUKOTA JAKARTA': 'DKI Jakarta',
+          'DI YOGYAKARTA': 'DI Yogyakarta',
+          'DAERAH ISTIMEWA YOGYAKARTA': 'DI Yogyakarta',
+          'JAWA BARAT': 'Jawa Barat', 'JAWA TENGAH': 'Jawa Tengah', 'JAWA TIMUR': 'Jawa Timur',
+          'BANTEN': 'Banten', 'BALI': 'Bali', 'ACEH': 'Aceh', 'SUMATERA UTARA': 'Sumatera Utara',
+          'SUMATERA BARAT': 'Sumatera Barat', 'RIAU': 'Riau', 'JAMBI': 'Jambi', 'SUMATERA SELATAN': 'Sumatera Selatan',
+          'BENGKULU': 'Bengkulu', 'LAMPUNG': 'Lampung', 'KALIMANTAN BARAT': 'Kalimantan Barat',
+          'KALIMANTAN TENGAH': 'Kalimantan Tengah', 'KALIMANTAN SELATAN': 'Kalimantan Selatan',
+          'KALIMANTAN TIMUR': 'Kalimantan Timur', 'KALIMANTAN UTARA': 'Kalimantan Utara',
+          'SULAWESI UTARA': 'Sulawesi Utara', 'SULAWESI TENGAH': 'Sulawesi Tengah',
+          'SULAWESI SELATAN': 'Sulawesi Selatan', 'SULAWESI TENGGARA': 'Sulawesi Tenggara',
+          'GORONTALO': 'Gorontalo', 'SULAWESI BARAT': 'Sulawesi Barat', 'MALUKU': 'Maluku',
+          'MALUKU UTARA': 'Maluku Utara', 'PAPUA BARAT': 'Papua Barat', 'PAPUA BARAT DAYA': 'Papua Barat Daya',
+          'PAPUA': 'Papua', 'PAPUA SELATAN': 'Papua Selatan', 'PAPUA TENGAH': 'Papua Tengah',
+          'PAPUA PEGUNUNGAN': 'Papua Pegunungan'
+        };
+        const key = String(name || '').trim().toUpperCase().replace(/\s+/g, ' ');
+        return aliases[key] || name;
+      }
+
+      function formatCfr(v) {
+        return v === null || v === undefined ? 'Ineligible' : v.toFixed(2).replace('.', ',') + '%';
+      }
+
+      function loadGeoJSON() {
+        if (!geojsonPromise) {
+          geojsonPromise = fetch(GEOJSON_URL, {cache: 'no-store'})
+            .then(r => {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.json();
+            })
+            .then(data => {
+              geojsonData = data;
+              return data;
+            });
+        }
+        return geojsonPromise;
+      }
+
+      function addMapInfo(map, type) {
+        const info = L.control({position: 'topright'});
+        info.onAdd = function () {
+          this._div = L.DomUtil.create('div', 'map-info-control');
+          this.update();
+          return this._div;
+        };
+        info.update = function (props) {
+          if (!props) {
+            this._div.innerHTML = type === 'cfr'
+              ? '<h4>Heatmap Capaian CFR DO Nasional</h4>Hover over a province'
+              : '<h4>Ketersediaan RS PONEK</h4>Hover over a province';
+            return;
+          }
+          const name = normalizeProvinceName(provinceName({properties: props}));
+          if (type === 'cfr') {
+            const v = cfrData[name];
+            this._div.innerHTML = '<h4>Heatmap Capaian CFR DO Nasional</h4>' +
+              '<b>Province: </b>' + name + '<br>' +
+              '<b>CFR DO: </b>' + formatCfr(v) + '<br>' +
+              '<b>Target: </b>&lt; 1%';
+          } else {
+            const v = ponekData[name] ?? 0;
+            this._div.innerHTML = '<h4>Ketersediaan RS PONEK</h4>' +
+              '<b>Province: </b>' + name + '<br>' +
+              '<b>Pemenuhan: </b>' + v + '%';
+          }
+        };
+        info.addTo(map);
+        return info;
+      }
+
+      function addMapLegend(map, type) {
+        const legend = L.control({position: 'bottomright'});
+        legend.onAdd = function () {
+          const div = L.DomUtil.create('div', 'map-legend-control');
+          if (type === 'cfr') {
+            div.innerHTML = '<b>Capaian CFR DO Nasional</b><br><small>Target: &lt; 1%</small><br><br>' +
+              '<i style="background:#238B45"></i>Tercapai (&lt; 0,50%)<br>' +
+              '<i style="background:#7FC99A"></i>Tercapai (0,50–0,74%)<br>' +
+              '<i style="background:#F4B6C2"></i>Mendekati target (0,75–0,99%)<br>' +
+              '<i style="background:#BD0026"></i>Tidak tercapai (1,00–1,49%)<br>' +
+              '<i style="background:#800026"></i>Tinggi (≥ 1,50%)<br>' +
+              '<i style="background:#A7AEB8"></i>Ineligible';
+          } else {
+            div.innerHTML = '<b>Pemenuhan PONEK</b><br><br>' +
+              '<i style="background:#dd4454"></i>0–39%<br>' +
+              '<i style="background:#f1b5c9"></i>40–59%<br>' +
+              '<i style="background:#8fca9f"></i>60–79%<br>' +
+              '<i style="background:#4fae73"></i>80–100%<br>' +
+              '<i style="background:#238b45"></i>&gt;100%';
+          }
+          return div;
+        };
+        legend.addTo(map);
+      }
+
+      function createBaseMap(id) {
+        const map = L.map(id, {
+          zoomControl: true,
+          attributionControl: true,
+          scrollWheelZoom: false,
+          doubleClickZoom: false,
+          dragging: true,
+          touchZoom: true,
+          keyboard: false,
+          worldCopyJump: false
+        }).setView([-2.5489, 118.0149], 5);
+
+        L.tileLayer(
+          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+          {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
+          }
+        ).addTo(map);
+
+        return map;
+      }
+
+      function createPonekMap(data) {
+        if (ponekMap) return;
+        ponekMap = createBaseMap('mapPonek');
+        const info = addMapInfo(ponekMap, 'ponek');
+        addMapLegend(ponekMap, 'ponek');
+
+        ponekLayer = L.geoJSON(data, {
+          style: function (feature) {
+            const name = normalizeProvinceName(provinceName(feature));
+            return {
+              fillColor: ponekColor(ponekData[name] ?? 0),
+              weight: 1.5, opacity: 1, color: '#fff', dashArray: '3', fillOpacity: .72
+            };
+          },
+          onEachFeature: function (feature, layer) {
+            const name = normalizeProvinceName(provinceName(feature));
+            const value = ponekData[name] ?? 0;
+            layer.bindTooltip('<strong>' + name + '</strong><br>PONEK: <b>' + value + '%</b><br>Target: 1 RS PONEK / 500.000 penduduk', {sticky: true});
+            layer.on({
+              mouseover: e => {
+                e.target.setStyle({weight: 3, color: '#666', dashArray: '', fillOpacity: .9});
+                e.target.bringToFront();
+                info.update(feature.properties);
+              },
+              mouseout: e => {
+                ponekLayer.resetStyle(e.target);
+                info.update();
+              },
+              click: () => openProvince(name)
+            });
+          }
+        }).addTo(ponekMap);
+
+        ponekMap.fitBounds(ponekLayer.getBounds(), {padding: [15, 15]});
+        setTimeout(() => ponekMap.invalidateSize(true), 100);
+      }
+
+      function createCfrMap(data) {
+        if (cfrMap) {
+          setTimeout(() => {
+            cfrMap.invalidateSize(true);
+            if (cfrLayer) cfrMap.fitBounds(cfrLayer.getBounds(), {padding: [15, 15]});
+          }, 80);
+          return;
+        }
+
+        cfrMap = createBaseMap('mapCfr');
+        const info = addMapInfo(cfrMap, 'cfr');
+        addMapLegend(cfrMap, 'cfr');
+
+        cfrLayer = L.geoJSON(data, {
+          style: function (feature) {
+            const name = normalizeProvinceName(provinceName(feature));
+            return {
+              fillColor: cfrColor(cfrData[name]),
+              weight: 1.5, opacity: 1, color: '#fff', dashArray: '3', fillOpacity: .78
+            };
+          },
+          onEachFeature: function (feature, layer) {
+            const name = normalizeProvinceName(provinceName(feature));
+            const value = cfrData[name];
+            layer.bindTooltip(
+              '<strong>' + name + '</strong><br>' +
+              'Capaian Angka Fatalitas CFR DO: <b>' + formatCfr(value) + '</b><br>' +
+              'Target PRD: &lt; 1%',
+              {sticky: true}
+            );
+            layer.on({
+              mouseover: e => {
+                e.target.setStyle({weight: 3, color: '#666', dashArray: '', fillOpacity: .95});
+                e.target.bringToFront();
+                info.update(feature.properties);
+              },
+              mouseout: e => {
+                cfrLayer.resetStyle(e.target);
+                info.update();
+              },
+              click: () => openCfr(name)
+            });
+          }
+        }).addTo(cfrMap);
+
+        cfrMap.fitBounds(cfrLayer.getBounds(), {padding: [15, 15]});
+        setTimeout(() => {
+          cfrMap.invalidateSize(true);
+          cfrMap.fitBounds(cfrLayer.getBounds(), {padding: [15, 15]});
+        }, 120);
+      }
+
+      // Load only PONEK initially. CFR is deliberately created after the CFR page is visible.
+      loadGeoJSON()
+        .then(data => createPonekMap(data))
+        .catch(error => {
+          console.error(error);
+          document.getElementById('mapPonek').innerHTML = '<div style="padding:40px;text-align:center;color:#667085"><b>Peta Indonesia tidak dapat dimuat.</b><br>Periksa koneksi internet.</div>';
+        });
+
+      function showPage(page) {
+        document.getElementById('ponekPage').style.display = page === 'ponek' ? 'block' : 'none';
+        document.getElementById('provincePage').style.display = 'none';
+        document.getElementById('cfrPage').style.display = page === 'cfr' ? 'block' : 'none';
+        document.getElementById('cfrProvincePage').style.display = 'none';
+        document.getElementById('navPonek').classList.toggle('active', page === 'ponek');
+        document.getElementById('navCfr').classList.toggle('active', page === 'cfr');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+
+        if (page === 'ponek') {
+          if (ponekMap) {
+            setTimeout(() => {
+              ponekMap.invalidateSize(true);
+              if (ponekLayer) ponekMap.fitBounds(ponekLayer.getBounds(), {padding: [15, 15]});
+            }, 120);
+          }
+        }
+
+        if (page === 'cfr') {
+          // Critical fix: create the CFR Leaflet map only after its parent is visible.
+          setTimeout(() => {
+            loadGeoJSON()
+              .then(data => createCfrMap(data))
+              .catch(error => {
+                console.error(error);
+                document.getElementById('mapCfr').innerHTML = '<div style="padding:40px;text-align:center;color:#667085"><b>Peta CFR DO tidak dapat dimuat.</b><br>Periksa koneksi internet.</div>';
+              });
+          }, 80);
+        }
+      }
+      function openProvince(name) {
+        document.getElementById('ponekPage').style.display = 'none';
+        document.getElementById('cfrPage').style.display = 'none';
+        document.getElementById('provincePage').style.display = 'block';
+        document.getElementById('navPonek').classList.add('active'); document.getElementById('navCfr').classList.remove('active');
+        document.getElementById('provinceTitle').textContent = 'Dashboard Ketersediaan RS PONEK / ' + name;
+        document.getElementById('provinceCrumb').textContent = name;
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+      function backNational() {showPage('ponek')}
+      const hospitals = {
+        'Kab. Batang': [['RSUD Kabupaten Batang', 'RSU Kelas C', 'Pemerintah Daerah', 'Spesialistik'], ['RS Qim Batang', 'RSU Kelas D', 'Swasta', 'Spesialistik'], ['RSIA Mutiara Hati', 'RSIA Kelas C', 'Swasta', 'Subspesialistik']],
+        'Kab. Kendal': [['RSUD Dr. Soewondo', 'RSU Kelas B', 'Pemerintah Daerah', 'Spesialistik'], ['RS Islam Kendal', 'RSU Kelas C', 'Swasta', 'Subspesialistik']],
+        'Kota Semarang': [['RSUP Dr. Kariadi', 'RSU Kelas A', 'Pemerintah Pusat', 'Multisubspesialistik'], ['RSUD K.R.M.T. Wongsonegoro', 'RSU Kelas B', 'Pemerintah Daerah', 'Spesialistik'], ['RS Roemani', 'RSU Kelas B', 'Swasta', 'Spesialistik']]
+      };
+      function openHospitals(region) {
+        document.getElementById('modalRegion').textContent = region;
+        const rows = hospitals[region] || hospitals['Kab. Batang'];
+        document.getElementById('hospitalRows').innerHTML = rows.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="status ${r[3].toLowerCase().includes('multi') ? 'pink' : 'green'}">${r[3]}</span></td></tr>`).join('');
+        document.getElementById('hospitalModal').classList.add('show');
+      }
+      function closeModal() {document.getElementById('hospitalModal').classList.remove('show')}
+
+      const cfrProvinceRows = {
+        'Jawa Tengah': [
+          ['Kab. Cilacap', 1245, 12, 892, 7, 2137, 92, 0.54, true],
+          ['Kab. Banyumas', 1102, 18, 765, 12, 1867, 88, 1.21, true],
+          ['Kab. Purbalingga', 723, 4, 512, 4, 1235, 85, 0.78, true],
+          ['Kab. Banjarnegara', 684, 10, 491, 8, 1175, 83, 1.36, true],
+          ['Kab. Kebumen', 951, 9, 702, 6, 1653, 90, 0.63, true],
+          ['Kab. Purworejo', 620, 6, 455, 4, 1075, 81, 0.88, true],
+          ['Kab. Wonosobo', 532, 7, 398, 6, 930, 79, null, false],
+          ['Kab. Magelang', 1021, 13, 756, 9, 1777, 87, 0.82, true],
+          ['Kota Magelang', 312, 2, 221, 1, 533, 75, null, false],
+          ['Kota Surakarta', 1845, 25, 1312, 15, 3157, 91, 1.07, true]
+        ],
+        'Jawa Barat': [
+          ['Kab. Bogor', 1650, 16, 1240, 15, 2890, 91, 0.72, true],
+          ['Kab. Bekasi', 1420, 14, 1105, 16, 2525, 89, 1.18, true],
+          ['Kab. Bandung', 1325, 13, 980, 12, 2305, 87, 1.05, true],
+          ['Kab. Sukabumi', 805, 8, 620, 7, 1425, 84, 0.93, true],
+          ['Kab. Cirebon', 920, 11, 690, 9, 1610, 82, 1.27, true],
+          ['Kota Bandung', 1880, 18, 1420, 14, 3300, 94, 0.61, true],
+          ['Kota Bekasi', 1120, 10, 860, 11, 1980, 90, 1.11, true]
+        ],
+        'Jawa Timur': [
+          ['Kab. Sidoarjo', 1340, 11, 1010, 10, 2350, 92, 0.67, true],
+          ['Kab. Malang', 1280, 13, 950, 9, 2230, 89, 0.81, true],
+          ['Kab. Jember', 1015, 12, 770, 11, 1785, 86, 1.06, true],
+          ['Kab. Banyuwangi', 890, 8, 650, 7, 1540, 84, 0.74, true],
+          ['Kab. Kediri', 970, 9, 710, 8, 1680, 88, 0.93, true],
+          ['Kota Surabaya', 2100, 19, 1580, 16, 3680, 95, 0.58, true]
+        ],
+        'DKI Jakarta': [
+          ['Kep. Seribu', 110, 1, 75, 1, 185, 86, 0.54, true],
+          ['Kota Adm. Jakarta Selatan', 1540, 9, 1120, 7, 2660, 95, 0.39, true],
+          ['Kota Adm. Jakarta Timur', 1620, 10, 1185, 8, 2805, 94, 0.42, true],
+          ['Kota Adm. Jakarta Pusat', 1180, 8, 860, 6, 2040, 93, 0.36, true],
+          ['Kota Adm. Jakarta Barat', 1450, 11, 1090, 8, 2540, 92, 0.47, true],
+          ['Kota Adm. Jakarta Utara', 1310, 9, 980, 7, 2290, 91, 0.44, true]
+        ]
+      };
+
+      function cfrInitials(name) {
+        const parts = String(name).trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+
+      function renderCfrProvinceRows(name) {
+        const rows = cfrProvinceRows[name] || cfrProvinceRows['Jawa Tengah'];
+        const totalKab = name === 'DKI Jakarta' ? 6 : (name === 'Jawa Barat' ? 27 : (name === 'Jawa Timur' ? 38 : 35));
+        document.getElementById('cfrProvinceCount').textContent = 'Menampilkan 1 - ' + Math.min(10, totalKab) + ' dari ' + totalKab + ' Kab/Kota';
+
+        document.getElementById('cfrProvinceRows').innerHTML = rows.slice(0, 10).map((r, i) => {
+          const [region, hdk, deadHdk, hpp, deadHpp, total, metNeed, cfr, eligible] = r;
+          const eligibleBadge = eligible
+            ? '<span class="status green">Eligible</span>'
+            : '<span class="status gray">Tidak Eligible</span>';
+          const cfrText = eligible ? cfr.toFixed(2).replace('.', ',') + '%' : '-';
+          const cfrClass = eligible ? (cfr < 1 ? 'up' : 'down') : '';
+          const interpretation = eligible
+            ? (cfr < 1
+              ? '<span class="status green">Memenuhi Target</span>'
+              : '<span class="status red">Tidak Memenuhi Target</span>')
+            : '-';
+
+          return '<tr>' +
+            '<td class="num">' + (i + 1) + '</td>' +
+            '<td style="text-align:left"><span class="link province-link">' + region + ' ›</span></td>' +
+            '<td class="num">' + hdk.toLocaleString('id-ID') + '</td>' +
+            '<td class="num">' + deadHdk + '</td>' +
+            '<td class="num">' + hpp.toLocaleString('id-ID') + '</td>' +
+            '<td class="num">' + deadHpp + '</td>' +
+            '<td class="num">' + total.toLocaleString('id-ID') + '</td>' +
+            '<td class="num">' + metNeed + '%</td>' +
+            '<td>' + eligibleBadge + '</td>' +
+            '<td class="num ' + cfrClass + '"><b>' + cfrText + '</b></td>' +
+            '<td>' + interpretation + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+
+      function openCfr(name) {
+        document.getElementById('ponekPage').style.display = 'none';
+        document.getElementById('provincePage').style.display = 'none';
+        document.getElementById('cfrPage').style.display = 'none';
+        document.getElementById('cfrProvincePage').style.display = 'block';
+        document.getElementById('navPonek').classList.remove('active');
+        document.getElementById('navCfr').classList.add('active');
+
+        document.getElementById('cfrProvinceTitle').textContent = 'Provinsi ' + name;
+        document.getElementById('cfrProvinceBadge').textContent = cfrInitials(name);
+        renderCfrProvinceRows(name);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+      function backCfrProvince() {showPage('cfr')}
+      function closeCfrModal() {document.getElementById('cfrModal').classList.remove('show')}
+      function toast(msg) {const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200)}
+    </script>
+</body>
+
+</html>
