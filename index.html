@@ -242,7 +242,7 @@
     }
 
     .kpis {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       margin-bottom: 18px
     }
 
@@ -402,6 +402,12 @@
 
     .leaflet-control-attribution {
       font-size: 9px
+    }
+
+    /* PONEK level badge */
+    .ponek-level {
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .map-info-control {
@@ -1042,19 +1048,24 @@
               <div class="foot"><span class="up">100%</span> data regional</div>
             </div>
             <div class="card kpi">
-              <div class="label">KAB/KOTA MEMENUHI</div>
+              <div class="label">PROVINSI MEMENUHI</div>
+              <div class="value">21</div>
+              <div class="foot">memenuhi target RS PONEK</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">PROVINSI BELUM MEMENUHI</div>
+              <div class="value">17</div>
+              <div class="foot"><span class="down">44,7%</span> dari 38 provinsi</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KOTA/KAB MEMENUHI</div>
               <div class="value">312</div>
               <div class="foot">dari 514 kabupaten/kota</div>
             </div>
             <div class="card kpi">
-              <div class="label">KAB/KOTA BELUM MEMENUHI</div>
+              <div class="label">KOTA/KAB BELUM MEMENUHI</div>
               <div class="value">202</div>
               <div class="foot"><span class="down">39,3%</span> dari total</div>
-            </div>
-            <div class="card kpi">
-              <div class="label">RASIO TARGET</div>
-              <div class="value">1 : 500.000</div>
-              <div class="foot">penduduk per RS PONEK</div>
             </div>
           </div>
 
@@ -1247,17 +1258,22 @@
 
           <div class="grid kpis">
             <div class="card kpi">
-              <div class="label">PROVINSI TARGET MET</div>
+              <div class="label">PROVINSI MEMENUHI</div>
               <div class="value">21</div>
               <div class="foot">CFR &lt; 1%</div>
             </div>
             <div class="card kpi">
-              <div class="label">PROVINSI TARGET NOT MET</div>
+              <div class="label">PROVINSI BELUM MEMENUHI</div>
               <div class="value">12</div>
               <div class="foot">CFR ≥ 1%</div>
             </div>
             <div class="card kpi">
-              <div class="label">KAB/KOTA INELIGIBLE</div>
+              <div class="label">KAB/KOTA MEMENUHI</div>
+              <div class="value">312</div>
+              <div class="foot">memenuhi indikator CFR DO</div>
+            </div>
+            <div class="card kpi">
+              <div class="label">KAB/KOTA INELIGIBLE (BELUM MEMENUHI)</div>
               <div class="value">86</div>
               <div class="foot">kasus &lt; 100 atau met need tidak terpenuhi</div>
             </div>
@@ -1493,7 +1509,8 @@
             <thead>
               <tr>
                 <th>NAMA RUMAH SAKIT</th>
-                <th>JENIS RUMAH SAKIT</th>
+                <th>KOMPETENSI PELAYANAN IBU & GINEKOLOGI</th>
+                <th>KOMPETENSI PELAYANAN NEONATUS</th>
                 <th>KEPEMILIKAN</th>
                 <th>LEVEL RS PONEK</th>
               </tr>
@@ -1857,14 +1874,22 @@
       }
       function backNational() {showPage('ponek')}
       const hospitals = {
-        'Kab. Batang': [['RSUD Kabupaten Batang', 'RSU Kelas C', 'Pemerintah Daerah', 'Spesialistik'], ['RS Qim Batang', 'RSU Kelas D', 'Swasta', 'Spesialistik'], ['RSIA Mutiara Hati', 'RSIA Kelas C', 'Swasta', 'Subspesialistik']],
-        'Kab. Kendal': [['RSUD Dr. Soewondo', 'RSU Kelas B', 'Pemerintah Daerah', 'Spesialistik'], ['RS Islam Kendal', 'RSU Kelas C', 'Swasta', 'Subspesialistik']],
-        'Kota Semarang': [['RSUP Dr. Kariadi', 'RSU Kelas A', 'Pemerintah Pusat', 'Multisubspesialistik'], ['RSUD K.R.M.T. Wongsonegoro', 'RSU Kelas B', 'Pemerintah Daerah', 'Spesialistik'], ['RS Roemani', 'RSU Kelas B', 'Swasta', 'Spesialistik']]
+        'Kab. Batang': [['RSUD Kabupaten Batang', 'UTAMA', 'PARIPURNA', 'Pemerintah Daerah', 'Spesialistik'], ['RS Qim Batang', 'UTAMA', 'UTAMA', 'Swasta', 'Spesialistik'], ['RSIA Mutiara Hati', 'PARIPURNA', 'PARIPURNA', 'Swasta', 'Subspesialistik']],
+        'Kab. Kendal': [['RSUD Dr. Soewondo', 'PARIPURNA', 'UTAMA', 'Pemerintah Daerah', 'Spesialistik'], ['RS Islam Kendal', 'UTAMA', 'PARIPURNA', 'Swasta', 'Subspesialistik']],
+        'Kota Semarang': [['RSUP Dr. Kariadi', 'PARIPURNA', 'PARIPURNA', 'Pemerintah Pusat', 'Multisubspesialistik'], ['RSUD K.R.M.T. Wongsonegoro', 'UTAMA', 'UTAMA', 'Pemerintah Daerah', 'Spesialistik'], ['RS Roemani', 'PARIPURNA', 'PARIPURNA', 'Swasta', 'Spesialistik']]
       };
       function openHospitals(region) {
         document.getElementById('modalRegion').textContent = region;
         const rows = hospitals[region] || hospitals['Kab. Batang'];
-        document.getElementById('hospitalRows').innerHTML = rows.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="status ${r[3].toLowerCase().includes('multi') ? 'pink' : 'green'}">${r[3]}</span></td></tr>`).join('');
+        document.getElementById('hospitalRows').innerHTML = rows.map(r => `<tr>
+          <td><b>${r[0]}</b></td>
+          <td>${r[1]}</td>
+          <td>${r[2]}</td>
+          <td>${r[3]}</td>
+          <td><span class="status ponek-level ${r[4] === 'Multisubspesialistik' ? 'pink' :
+            r[4] === 'Subspesialistik' ? 'green' : 'gray'
+          }">${r[4]}</span></td>
+        </tr>`).join('');
         document.getElementById('hospitalModal').classList.add('show');
       }
       function closeModal() {document.getElementById('hospitalModal').classList.remove('show')}
