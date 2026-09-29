@@ -1174,43 +1174,7 @@
                   <th>STATUS PEMENUHAN INDIKATOR</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>Kab. Kendal</td>
-                  <td>8</td>
-                  <td>2</td>
-                  <td><span class="link" onclick="openHospitals('Kab. Kendal')">2 RS Terstandar →</span></td>
-                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
-                </tr>
-                <tr>
-                  <td>Kota Semarang</td>
-                  <td>15</td>
-                  <td>3</td>
-                  <td><span class="link" onclick="openHospitals('Kota Semarang')">3 RS Terstandar →</span></td>
-                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
-                </tr>
-                <tr>
-                  <td>Kab. Batang</td>
-                  <td>4</td>
-                  <td>2</td>
-                  <td><span class="link" onclick="openHospitals('Kab. Batang')">1 RS Terstandar →</span></td>
-                  <td><span class="status red">MERAH · BELUM TERPENUHI</span></td>
-                </tr>
-                <tr>
-                  <td>Kab. Demak</td>
-                  <td>6</td>
-                  <td>2</td>
-                  <td><span class="link" onclick="openHospitals('Kab. Demak')">2 RS Terstandar →</span></td>
-                  <td><span class="status green">HIJAU · TERPENUHI</span></td>
-                </tr>
-                <tr>
-                  <td>Kab. Grobogan</td>
-                  <td>7</td>
-                  <td>2</td>
-                  <td><span class="link" onclick="openHospitals('Kab. Grobogan')">1 RS Terstandar →</span></td>
-                  <td><span class="status red">MERAH · BELUM TERPENUHI</span></td>
-                </tr>
-              </tbody>
+              <tbody id="provinceRows"></tbody>
             </table>
           </div>
           <div class="grid two" style="margin-top:18px">
@@ -1228,13 +1192,13 @@
               <h3 style="font-size:14px;margin:0">Capaian provinsi</h3>
               <div class="progress-row">
                 <div class="progress-label">Memenuhi</div>
-                <div class="bar"><i style="width:71%"></i></div>
-                <div class="pct">25/35</div>
+                <div class="bar"><i id="provinceMetBar" style="width:71%"></i></div>
+                <div class="pct" id="provinceMetText">25/35</div>
               </div>
               <div class="progress-row">
                 <div class="progress-label">Belum</div>
-                <div class="bar"><i style="width:29%;background:var(--red)"></i></div>
-                <div class="pct">10/35</div>
+                <div class="bar"><i id="provinceUnmetBar" style="width:29%;background:var(--red)"></i></div>
+                <div class="pct" id="provinceUnmetText">10/35</div>
               </div>
             </div>
           </div>
@@ -1863,6 +1827,114 @@
           }, 80);
         }
       }
+      const provinceHospitalRows = {
+        'DKI Jakarta': [
+          { name: 'Kota Jakarta Selatan', total: 15, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kota Jakarta Timur', total: 13, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kota Jakarta Pusat', total: 12, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kota Jakarta Barat', total: 11, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kota Jakarta Utara', total: 10, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Kepulauan Seribu', total: 4, target: 1, terstandar: 1, status: 'green' }
+        ],
+        'Jawa Tengah': [
+          { name: 'Kab. Kendal', total: 8, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kota Semarang', total: 15, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kab. Batang', total: 4, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Demak', total: 6, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Grobogan', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Cilacap', total: 9, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Banyumas', total: 10, target: 2, terstandar: 1, status: 'red' }
+        ],
+        'Jawa Barat': [
+          { name: 'Kab. Bogor', total: 12, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Bekasi', total: 10, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Bandung', total: 9, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Bandung', total: 15, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kota Bekasi', total: 11, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Cirebon', total: 7, target: 2, terstandar: 1, status: 'red' }
+        ],
+        'Jawa Timur': [
+          { name: 'Kab. Sidoarjo', total: 11, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Malang', total: 9, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Jember', total: 8, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Banyuwangi', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Surabaya', total: 18, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kab. Kediri', total: 7, target: 2, terstandar: 2, status: 'green' }
+        ],
+        'Sulawesi Utara': [
+          { name: 'Kab. Minahasa', total: 9, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Bolaang Mongondow', total: 8, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Minahasa Selatan', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Manado', total: 11, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kota Bitung', total: 6, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kota Tomohon', total: 5, target: 1, terstandar: 1, status: 'green' }
+        ],
+        'Sulawesi Tengah': [
+          { name: 'Kab. Poso', total: 8, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Banggai', total: 9, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Morowali', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Parigi Moutong', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Palu', total: 10, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Tojo Una-Una', total: 5, target: 1, terstandar: 1, status: 'green' }
+        ],
+        'Sulawesi Selatan': [
+          { name: 'Kab. Gowa', total: 12, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Bone', total: 10, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Takalar', total: 6, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kab. Maros', total: 7, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kab. Wajo', total: 8, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Luwu', total: 9, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Makassar', total: 16, target: 3, terstandar: 3, status: 'green' },
+          { name: 'Kota Parepare', total: 5, target: 1, terstandar: 1, status: 'green' }
+        ],
+        'Sulawesi Tenggara': [
+          { name: 'Kab. Konawe', total: 8, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Kolaka', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Muna', total: 6, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Bombana', total: 6, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kota Kendari', total: 9, target: 2, terstandar: 2, status: 'green' },
+          { name: 'Kab. Buton', total: 5, target: 1, terstandar: 1, status: 'green' }
+        ],
+        'Gorontalo': [
+          { name: 'Kab. Gorontalo', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Boalemo', total: 5, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kab. Pohuwato', total: 6, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Bone Bolango', total: 6, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kota Gorontalo', total: 8, target: 2, terstandar: 2, status: 'green' }
+        ],
+        'Sulawesi Barat': [
+          { name: 'Kab. Majene', total: 5, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kab. Polewali Mandar', total: 7, target: 2, terstandar: 1, status: 'red' },
+          { name: 'Kab. Mamasa', total: 4, target: 1, terstandar: 0, status: 'red' },
+          { name: 'Kab. Mamuju', total: 6, target: 1, terstandar: 1, status: 'green' },
+          { name: 'Kab. Mamuju Tengah', total: 5, target: 1, terstandar: 1, status: 'green' }
+        ]
+      };
+
+      function renderProvinceRows(name) {
+        const rows = provinceHospitalRows[name] || provinceHospitalRows['Jawa Tengah'];
+        const total = rows.length;
+        const met = rows.filter(r => r.status === 'green').length;
+        const unmet = total - met;
+        const metPct = total ? Math.round((met / total) * 100) : 0;
+        const unmetPct = total ? Math.round((unmet / total) * 100) : 0;
+
+        document.getElementById('provinceRows').innerHTML = rows.map(r => `
+          <tr>
+            <td>${r.name}</td>
+            <td>${r.total}</td>
+            <td>${r.target}</td>
+            <td><span class="link" onclick="openHospitals('${r.name}')">${r.terstandar} RS Terstandar →</span></td>
+            <td><span class="status ${r.status === 'green' ? 'green' : 'red'}">${r.status === 'green' ? 'HIJAU · TERPENUHI' : 'MERAH · BELUM TERPENUHI'}</span></td>
+          </tr>
+        `).join('');
+
+        document.getElementById('provinceMetBar').style.width = metPct + '%';
+        document.getElementById('provinceUnmetBar').style.width = unmetPct + '%';
+        document.getElementById('provinceMetText').textContent = met + '/' + total;
+        document.getElementById('provinceUnmetText').textContent = unmet + '/' + total;
+      }
+
       function openProvince(name) {
         document.getElementById('ponekPage').style.display = 'none';
         document.getElementById('cfrPage').style.display = 'none';
@@ -1870,6 +1942,7 @@
         document.getElementById('navPonek').classList.add('active'); document.getElementById('navCfr').classList.remove('active');
         document.getElementById('provinceTitle').textContent = 'Dashboard Ketersediaan RS PONEK / ' + name;
         document.getElementById('provinceCrumb').textContent = name;
+        renderProvinceRows(name);
         window.scrollTo({top: 0, behavior: 'smooth'});
       }
       function backNational() {showPage('ponek')}
@@ -1931,6 +2004,54 @@
           ['Kota Adm. Jakarta Pusat', 1180, 8, 860, 6, 2040, 93, 0.36, true],
           ['Kota Adm. Jakarta Barat', 1450, 11, 1090, 8, 2540, 92, 0.47, true],
           ['Kota Adm. Jakarta Utara', 1310, 9, 980, 7, 2290, 91, 0.44, true]
+        ],
+        'Sulawesi Utara': [
+          ['Kab. Minahasa', 540, 6, 430, 4, 970, 86, 0.77, true],
+          ['Kab. Bolaang Mongondow', 420, 7, 310, 5, 730, 81, 1.16, true],
+          ['Kab. Minahasa Selatan', 388, 5, 295, 4, 683, 78, 1.31, true],
+          ['Kota Manado', 860, 8, 620, 6, 1480, 92, 0.51, true],
+          ['Kota Bitung', 330, 4, 240, 2, 570, 80, 1.05, true],
+          ['Kota Tomohon', 210, 2, 170, 1, 380, 79, 1.32, true]
+        ],
+        'Sulawesi Tengah': [
+          ['Kab. Poso', 440, 5, 340, 3, 780, 80, 1.22, true],
+          ['Kab. Banggai', 520, 7, 390, 6, 910, 83, 1.08, true],
+          ['Kab. Morowali', 360, 5, 280, 3, 640, 77, 1.45, true],
+          ['Kab. Parigi Moutong', 410, 6, 290, 4, 700, 79, 1.33, true],
+          ['Kota Palu', 730, 7, 520, 5, 1250, 88, 0.69, true],
+          ['Kab. Tojo Una-Una', 220, 3, 170, 2, 390, 74, null, false]
+        ],
+        'Sulawesi Selatan': [
+          ['Kab. Gowa', 990, 12, 740, 8, 1730, 90, 0.72, true],
+          ['Kab. Bone', 620, 9, 470, 6, 1090, 84, 1.31, true],
+          ['Kab. Takalar', 320, 4, 250, 2, 570, 82, 0.91, true],
+          ['Kab. Maros', 400, 5, 300, 3, 700, 83, 0.88, true],
+          ['Kab. Wajo', 460, 6, 340, 4, 800, 85, 1.12, true],
+          ['Kab. Luwu', 510, 8, 380, 5, 890, 81, 1.24, true],
+          ['Kota Makassar', 1480, 15, 1090, 10, 2570, 94, 0.48, true],
+          ['Kota Parepare', 240, 3, 180, 2, 420, 80, 1.02, true]
+        ],
+        'Sulawesi Tenggara': [
+          ['Kab. Konawe', 430, 6, 330, 4, 760, 82, 1.14, true],
+          ['Kab. Kolaka', 380, 5, 295, 4, 675, 79, 1.47, true],
+          ['Kab. Muna', 330, 4, 260, 3, 590, 78, 1.21, true],
+          ['Kab. Bombana', 310, 5, 230, 3, 540, 76, 1.52, true],
+          ['Kota Kendari', 620, 7, 460, 4, 1080, 86, 0.74, true],
+          ['Kab. Buton', 220, 3, 170, 2, 390, 74, null, false]
+        ],
+        'Gorontalo': [
+          ['Kab. Gorontalo', 360, 5, 260, 3, 620, 79, 1.35, true],
+          ['Kab. Boalemo', 220, 3, 170, 2, 390, 77, 1.08, true],
+          ['Kab. Pohuwato', 300, 4, 220, 3, 520, 75, 1.28, true],
+          ['Kab. Bone Bolango', 260, 3, 180, 2, 440, 80, 0.96, true],
+          ['Kota Gorontalo', 420, 5, 320, 4, 740, 86, 0.68, true]
+        ],
+        'Sulawesi Barat': [
+          ['Kab. Majene', 240, 3, 180, 2, 420, 78, 0.92, true],
+          ['Kab. Polewali Mandar', 390, 6, 290, 4, 680, 83, 1.27, true],
+          ['Kab. Mamasa', 210, 3, 160, 2, 370, 72, null, false],
+          ['Kab. Mamuju', 320, 4, 240, 3, 560, 80, 1.04, true],
+          ['Kab. Mamuju Tengah', 250, 3, 180, 2, 430, 79, 0.97, true]
         ]
       };
 
